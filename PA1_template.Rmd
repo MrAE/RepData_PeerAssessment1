@@ -1,5 +1,6 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
+author: "Jesse Leigh Patsolic"
 output: 
   html_document:
     keep_md: true
@@ -8,15 +9,69 @@ output:
 
 ## Loading and preprocessing the data
 
+First here are the libraries that will be required for this analysis.
+```{r libraries}
+library(ggplot2)
+```
+
+To begin this analysis we start by loading the activity data provided
+for the course and assigning the appropriate classes to each column.
+A summary of the data follows:
+
+```{r initialize}
+dat <- as.data.frame(read.csv("./activity.csv"))
+
+dat$steps <- as.numeric(dat$steps)
+dat$date <- as.Date(strptime(dat$date, format="%Y-%m-%d"))
+dat$interval <- as.numeric(dat$interval)
+
+summary(dat)
+```
 
 
 ## What is mean total number of steps taken per day?
 
+There are 61 days of measurments.  I begin by creating a data frame with
+one row for each unique day of measurements.  Then I add an empty column
+`days$sum` to hold the daily sums as they are calculated in the 
+following `for` loop. 
 
+
+
+```{r days}
+days <- data.frame(day = as.Date(unique(dat$date)), sum = NA)
+
+for(i in 1:dim(days)[1]){
+    days$sum[i] <- sum(dat[dat$date == days[i,1],"steps"],na.rm=T)
+    }
+
+days$sum <- as.numeric(days$sum)
+```
+
+Now we have a data frame with totals for each day.  We can now plot the
+histogram.
+
+```{r plots1}
+
+```
+
+The mean and median of total number of steps taken each day are
+presented below.
+
+```{r meanmedian}
+mean(days$sum)
+median(days$sum)
+```
 
 ## What is the average daily activity pattern?
 
+The following will create a time series plot for each of the 5-minute
+intervals with a line indicating the 
 
+```{r plotw2}
+plot(dat$int, dat$steps, type="l")
+
+```
 
 ## Imputing missing values
 
