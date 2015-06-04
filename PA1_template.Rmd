@@ -31,11 +31,11 @@ summary(dat)
 
 ## What is mean total number of steps taken per day?
 
-There are 61 days of measurments.  I begin by creating a data frame with
-one row for each unique day of measurements.  Then I add an empty column
-`days$sum` to hold the daily sums as they are calculated in the 
+There are 61 days of measurments at 5-minute intervals.  
+I begin by creating a data frame with one row for each unique 
+day of measurements.  Then I add an empty column `days$sum` 
+to hold the daily sums as they are calculated in the 
 following `for` loop. 
-
 
 
 ```{r days}
@@ -52,7 +52,7 @@ Now we have a data frame with totals for each day.  We can now plot the
 histogram.
 
 ```{r plots1}
-
+x <- 10
 ```
 
 The mean and median of total number of steps taken each day are
@@ -65,16 +65,51 @@ median(days$sum)
 
 ## What is the average daily activity pattern?
 
-The following will create a time series plot for each of the 5-minute
-intervals with a line indicating the 
+The following will create a time series plot of the averages for each of
+the 288 intervals measured each day.
 
-```{r plotw2}
-plot(dat$int, dat$steps, type="l")
+```{r plots2}
+ints <- data.frame(intervals = unique(dat$int))
+ints$avg <- NA
+for(i in 1:length(ints$int)){
+          ints$avg[i] <- 
+              sum(dat[dat$int == ints$int[i],"steps"], na.rm=TRUE)/61;
+    }
 
+intMax <- ints[ints$avg == max(ints$avg),]
+
+plot(ints$avg~ints$int, 
+     type="l", 
+     col=3, 
+     lwd=2,
+     xlab="Intervals", 
+     ylab="Average Steps")
+title("Interval Averages") 
+points(ints[ints$avg == max(ints$avg),])
+text(ints[ints$avg == max(ints$avg),],pos=4, 
+        label=paste(intMax[,1],round(intMax[,2],2),sep=","))
 ```
+
+The 835th interval has the maximum average of `r round(intMax[,2],2)`.
+
 
 ## Imputing missing values
 
+```{r NAs}
+NAs <- length(which(!complete.cases(dat)))
+```
+There are `r NAs` rows with missing values in the data. 
+The original data will be copied into `dat2` and the missing values 
+will be imputed with mean for that interval as computed earlier.
+
+```{r imputing}
+dat2 <- dat
+
+```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+
+
