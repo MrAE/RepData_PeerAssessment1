@@ -11,6 +11,7 @@ output:
 
 First here are the libraries that will be required for this analysis.
 ```{r libraries}
+library(knitr)
 library(ggplot2)
 ```
 
@@ -38,7 +39,7 @@ to hold the daily sums as they are calculated in the
 following `for` loop. 
 
 
-```{r days}
+```{r days1}
 days <- data.frame(day = as.Date(unique(dat$date)), sum = NA)
 
 for(i in 1:dim(days)[1]){
@@ -49,10 +50,16 @@ days$sum <- as.numeric(days$sum)
 ```
 
 Now we have a data frame with totals for each day.  We can now plot the
-histogram.
+histogram.  Even though the `barplot` function is used the bin widths
+are length 1 and therefore the heights give the percantage of steps for
+each day. 
 
 ```{r plots1}
-x <- 10
+png("./figure/hist01.png", height=480, width=480)
+barplot(days$sum, col="blue")
+dev.off()
+
+barplot(days$sum, col="blue")
 ```
 
 The mean and median of total number of steps taken each day are
@@ -72,8 +79,8 @@ the 288 intervals measured each day.
 ints <- data.frame(intervals = unique(dat$int))
 ints$avg <- NA
 for(i in 1:length(ints$int)){
-          ints$avg[i] <- 
-              sum(dat[dat$int == ints$int[i],"steps"], na.rm=TRUE)/61;
+    ints$avg[i] <- 
+        sum(dat[dat$int == ints$int[i],"steps"], na.rm=TRUE)/61;
     }
 
 intMax <- ints[ints$avg == max(ints$avg),]
@@ -98,13 +105,51 @@ The 835th interval has the maximum average of `r round(intMax[,2],2)`.
 ```{r NAs}
 NAs <- length(which(!complete.cases(dat)))
 ```
+
 There are `r NAs` rows with missing values in the data. 
 The original data will be copied into `dat2` and the missing values 
-will be imputed with mean for that interval as computed earlier.
+will be imputed with the mean for that interval as computed in the
+graph above.
 
 ```{r imputing}
 dat2 <- dat
 
+for(i in 1:dim(dat2)[1]){
+    if(is.na(dat2[i,"steps"])){
+        dat2[i,1] <- ints[ints$int == dat2[i,3],2]
+        }
+    }
+```
+
+Now `dat2` has been imputed and we may continue with the analysis.
+`days2` is constructed as before with the imputed data.
+
+
+```{r days2}
+days2 <- data.frame(day = as.Date(unique(dat2$date)), sum = NA)
+
+for(i in 1:dim(days2)[1]){
+    days2$sum[i] <- sum(dat2[dat2$date == days2[i,1],"steps"],na.rm=T)
+    }
+
+days2$sum <- as.numeric(days2$sum)
+```
+
+```{r plots3}
+png("./figure/hist02.png", height=480, width=480)
+barplot(days2$sum, col="blue")
+dev.off()
+
+barplot(days2$sum, col="blue")
+```
+
+To compare the two histograms 
+
+```{r compare}
+par(mfrow=c(2,1))
+
+barplot(days$sum, col="blue")
+barplot(days2$sum, col="blue")
 ```
 
 
