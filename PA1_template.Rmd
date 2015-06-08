@@ -143,17 +143,41 @@ dev.off()
 barplot(days2$sum, col="blue")
 ```
 
-To compare the two histograms 
+### Comparing original data with imputed data.
+
+To compare the two histograms we plot them in a column, the imputed data
+is colored green.
 
 ```{r compare}
 par(mfrow=c(2,1))
-
 barplot(days$sum, col="blue")
-barplot(days2$sum, col="blue")
+barplot(days2$sum, col="darkgreen")
+```
+
+## Are there differences in activity patterns between weekdays and weekends?
+
+For this section we will be using the imputed data.  A factor variable
+will be created with two levels -- "weekday" and "weekend" -- for 
+when the measurements were taken.
+
+
+```{r weekdays}
+weekday <- setdiff(unique(weekdays(dat2$date)), c("Saturday", "Sunday"))
+weekend <- c("Saturday", "Sunday")
+
+# function for lapply later
+trans <- function(x){
+    if(x %in% weekday){return("weekday")}
+    else return("weekend")}
+
+dat2$dow <- as.factor(weekdays(dat2$date))
+dat2$wdwe <- factor(sapply(weekdays(dat2$date),trans))
+
+head(dat2)
+summary(dat2)
 ```
 
 
-## Are there differences in activity patterns between weekdays and weekends?
 
 
 
