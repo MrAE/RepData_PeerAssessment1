@@ -179,9 +179,12 @@ for(i in 1:dim(days2)[1]){
 days2$sum <- as.numeric(days2$sum)
 ```
 
+As stated before the `barplot` function is used to create a histogram as
+the bins have width=1.
+
 
 ```r
-barplot(days2$sum, col="blue")
+barplot(days2$sum,col="blue")
 ```
 
 ![plot of chunk plots3](figure/plots3-1.png) 
