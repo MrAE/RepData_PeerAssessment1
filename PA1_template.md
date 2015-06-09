@@ -23,8 +23,19 @@ A summary of the data follows:
 
 
 ```r
+unzip("./activity.zip")
 dat <- as.data.frame(read.csv("./activity.csv"))
 
+## clean up directory
+if(file.exists("./activity.csv")){file.remove("./activity.csv")}
+```
+
+```
+## [1] TRUE
+```
+
+```r
+## Class appropriately 
 dat$steps <- as.numeric(dat$steps)
 dat$date <- as.Date(strptime(dat$date, format="%Y-%m-%d"))
 dat$interval <- as.numeric(dat$interval)
@@ -249,7 +260,7 @@ p4 <- xyplot(intsWD$avg ~ intsWD$int | intsWD$wd,
 
 
 ```r
-p4
+plot(p4)
 ```
 
 ![plot of chunk plots4.2](figure/plots4.2-1.png) 

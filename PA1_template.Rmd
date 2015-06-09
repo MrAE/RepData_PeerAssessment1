@@ -21,11 +21,7 @@ for the course and assigning the appropriate classes to each column.
 A summary of the data follows:
 
 ```{r initialize}
-unzip("./activity.zip")
 dat <- as.data.frame(read.csv("./activity.csv"))
-
-## clean up directory
-file.remove("./activity.csv")
 
 ## Class appropriately 
 dat$steps <- as.numeric(dat$steps)
