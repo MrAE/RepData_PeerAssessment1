@@ -10,7 +10,8 @@ output:
 ## Loading and preprocessing the data
 
 First here are the libraries that will be required for this analysis.
-```{r libraries}
+
+```r
 library(knitr)
 library(ggplot2)
 library(lattice)
@@ -20,19 +21,26 @@ To begin this analysis we start by loading the activity data provided
 for the course and assigning the appropriate classes to each column.
 A summary of the data follows:
 
-```{r initialize}
-unzip("./activity.zip")
+
+```r
 dat <- as.data.frame(read.csv("./activity.csv"))
 
-## clean up directory
-file.remove("./activity.csv")
-
-## Class appropriately 
 dat$steps <- as.numeric(dat$steps)
 dat$date <- as.Date(strptime(dat$date, format="%Y-%m-%d"))
 dat$interval <- as.numeric(dat$interval)
 
 summary(dat)
+```
+
+```
+##      steps             date               interval     
+##  Min.   :  0.00   Min.   :2012-10-01   Min.   :   0.0  
+##  1st Qu.:  0.00   1st Qu.:2012-10-16   1st Qu.: 588.8  
+##  Median :  0.00   Median :2012-10-31   Median :1177.5  
+##  Mean   : 37.38   Mean   :2012-10-31   Mean   :1177.5  
+##  3rd Qu.: 12.00   3rd Qu.:2012-11-15   3rd Qu.:1766.2  
+##  Max.   :806.00   Max.   :2012-11-30   Max.   :2355.0  
+##  NA's   :2304
 ```
 
 
@@ -45,7 +53,8 @@ to hold the daily sums as they are calculated in the
 following `for` loop. 
 
 
-```{r days1}
+
+```r
 days <- data.frame(day = as.Date(unique(dat$date)), sum = NA)
 
 for(i in 1:dim(days)[1]){
@@ -60,7 +69,8 @@ histogram.  Even though the `barplot` function is used the bin widths
 are length 1 and therefore the heights give the percantage of steps for
 each day. 
 
-```{r plots1}
+
+```r
 #png("./figure/hist01.png", height=480, width=480)
 #barplot(days$sum, col="blue")
 #dev.off()
@@ -68,12 +78,26 @@ each day.
 barplot(days$sum, col="blue")
 ```
 
+![plot of chunk plots1](figure/plots1-1.png) 
+
 The mean and median of total number of steps taken each day are
 presented below.
 
-```{r meanmedian}
+
+```r
 mean(days$sum)
+```
+
+```
+## [1] 9354.23
+```
+
+```r
 median(days$sum)
+```
+
+```
+## [1] 10395
 ```
 
 ## What is the average daily activity pattern?
@@ -81,7 +105,8 @@ median(days$sum)
 The following will create a time series plot of the averages for each of
 the 288 intervals measured each day.
 
-```{r plots2}
+
+```r
 ints <- data.frame(intervals = unique(dat$int))
 ints$avg <- NA
 for(i in 1:length(ints$int)){
@@ -103,21 +128,25 @@ text(ints[ints$avg == max(ints$avg),],pos=4,
         label=paste(intMax[,1],round(intMax[,2],2),sep=","))
 ```
 
-The 835th interval has the maximum average of `r round(intMax[,2],2)`.
+![plot of chunk plots2](figure/plots2-1.png) 
+
+The 835th interval has the maximum average of 179.13.
 
 
 ## Imputing missing values
 
-```{r NAs}
+
+```r
 NAs <- length(which(!complete.cases(dat)))
 ```
 
-There are `r NAs` rows with missing values in the data. 
+There are 2304 rows with missing values in the data. 
 The original data will be copied into `dat2` and the missing values 
 will be imputed with the mean for that interval as computed in the
 graph above.
 
-```{r imputing}
+
+```r
 dat2 <- dat
 
 for(i in 1:dim(dat2)[1]){
@@ -131,7 +160,8 @@ Now `dat2` has been imputed and we may continue with the analysis.
 `days2` is constructed as before with the imputed data.
 
 
-```{r days2}
+
+```r
 days2 <- data.frame(day = as.Date(unique(dat2$date)), sum = NA)
 
 for(i in 1:dim(days2)[1]){
@@ -141,7 +171,8 @@ for(i in 1:dim(days2)[1]){
 days2$sum <- as.numeric(days2$sum)
 ```
 
-```{r plots3}
+
+```r
 #png("./figure/hist02.png", height=480, width=480)
 #barplot(days2$sum, col="blue")
 #dev.off()
@@ -149,16 +180,21 @@ days2$sum <- as.numeric(days2$sum)
 barplot(days2$sum, col="blue")
 ```
 
+![plot of chunk plots3](figure/plots3-1.png) 
+
 ### Comparing original data with imputed data.
 
 To compare the two histograms we plot them in a column, the imputed data
 is colored green.
 
-```{r compare}
+
+```r
 par(mfrow=c(2,1))
 barplot(days$sum, col="blue")
 barplot(days2$sum, col="darkgreen")
 ```
+
+![plot of chunk compare](figure/compare-1.png) 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -166,7 +202,8 @@ For this section we will be using the imputed data.   I create a
 function to aid in catagorizing the days of the week into a factor
 variable with levels `weekday` and `weekend`.  
 
-```{r weekdays}
+
+```r
 weekday <- setdiff(unique(weekdays(dat2$date)), c("Saturday", "Sunday"))
 weekend <- c("Saturday", "Sunday")
 
@@ -181,7 +218,8 @@ dat2$dow <- as.factor(weekdays(dat2$date))
 dat2$wdwe <- factor(sapply(weekdays(dat2$date),trans))
 ```
 
-```{r wdweAVG}
+
+```r
 intsWD <- data.frame(intervals = rep(unique(dat2$int),2))
 intsWD$avg <- NA
 intsWD$wd <- gl(2,dim(intsWD)[1]/2, labels=wdwe)
@@ -197,7 +235,8 @@ for(i in 1:length(intsWD$int)){
 From these data, a panel plot will be produced to compare and contrast the
 averages accross weekday and weekend measurements.
 
-```{r plots4}
+
+```r
 p4 <- xyplot(intsWD$avg ~ intsWD$int | intsWD$wd,
        main = "Weekday/Weekend",
        type="l", 
@@ -208,6 +247,9 @@ p4 <- xyplot(intsWD$avg ~ intsWD$int | intsWD$wd,
 
 #### Differences can be seen between the two panels both in the morning and thoughout the day. 
 
-```{r plots4.2}
-plot(p4)
+
+```r
+p4
 ```
+
+![plot of chunk plots4.2](figure/plots4.2-1.png) 
