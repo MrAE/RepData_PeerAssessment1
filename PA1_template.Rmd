@@ -9,7 +9,7 @@ output:
 
 ## Loading and preprocessing the data
 
-First here are the libraries that will be required for this analysis.
+Firstly, here are the libraries that will be required for this analysis.
 ```{r libraries}
 library(knitr)
 library(ggplot2)
@@ -17,7 +17,7 @@ library(lattice)
 ```
 
 To begin this analysis we start by loading the activity data provided
-for the course and assigning the appropriate classes to each column.
+and we then assign the appropriate classes to each column.
 A summary of the data follows:
 
 ```{r initialize}
@@ -54,13 +54,9 @@ days$sum <- as.numeric(days$sum)
 Now we have a data frame with totals for each day.  We can now plot the
 histogram.  Even though the `barplot` function is used the bin widths
 are length 1 and therefore the heights give the percantage of steps for
-each day. 
+each day as desired. 
 
 ```{r plots1}
-#png("./figure/hist01.png", height=480, width=480)
-#barplot(days$sum, col="blue")
-#dev.off()
-
 barplot(days$sum, col="blue")
 ```
 
@@ -138,10 +134,6 @@ days2$sum <- as.numeric(days2$sum)
 ```
 
 ```{r plots3}
-#png("./figure/hist02.png", height=480, width=480)
-#barplot(days2$sum, col="blue")
-#dev.off()
-
 barplot(days2$sum, col="blue")
 ```
 
@@ -159,7 +151,7 @@ barplot(days2$sum, col="darkgreen")
 ## Are there differences in activity patterns between weekdays and weekends?
 
 For this section we will be using the imputed data.   I create a
-function to aid in catagorizing the days of the week into a factor
+function `trans` to aid in catagorizing the days of the week into a factor
 variable with levels `weekday` and `weekend`.  
 
 ```{r weekdays}
@@ -191,7 +183,8 @@ for(i in 1:length(intsWD$int)){
 
 
 From these data, a panel plot will be produced to compare and contrast the
-averages accross weekday and weekend measurements.
+averages accross weekday and weekend measurements.  Note that the
+imputed data were used.
 
 ```{r plots4}
 p4 <- xyplot(intsWD$avg ~ intsWD$int | intsWD$wd,
